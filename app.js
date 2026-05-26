@@ -101,8 +101,8 @@ const Store = {
     _defaultConfig() {
         return {
             //controle dos usuarios
-            user: 'lucas',         // 👤 USUÁRIO DE LOGIN - EDITAR AQUI
-            pass: 'lucas123',         // 🔒 SENHA DE LOGIN - EDITAR AQUI
+            user: 'kleber',         // 👤 USUÁRIO DE LOGIN - EDITAR AQUI
+            pass: 'kleber',         // 🔒 SENHA DE LOGIN - EDITAR AQUI
 
             // 🔥 se você mudar isso manualmente no código,
             // todo mundo perde acesso automaticamente
