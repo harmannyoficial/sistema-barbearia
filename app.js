@@ -114,7 +114,7 @@ const Store = {
                     login: "lucas",
                     senha: "lucas123",
                     empresa: "BarberPro Lucas",
-                    validade: "2026-12-31",
+                    validade: "2026-05-27",
                     status: "ativo" // "ativo" ou "bloqueado"
                 }, 
                 
