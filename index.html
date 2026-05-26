@@ -27,11 +27,16 @@ PRECISA ADICIONAR BOTAO DE EXLUIR VALOR PAGO NO ADMIN  NO HISTORICO DE PAGAMENTO
         <p class="logo-sub">Sistema Profissional de Agendamento</p>
       </div>
       <div class="entry-buttons">
-        <button class="btn-entry client" onclick="App.showClientArea()">
+       <!--  
+        tirei porque nao estava funcionando 
+
+       <button class="btn-entry client"  onclick="App.showClientArea()">
           <span class="btn-icon">👤</span>
           <span class="btn-label">agendar Cliente</span>
           <span class="btn-desc">Agendar horário</span>
         </button>
+        
+        -->
         <button class="btn-entry admin" onclick="App.showLogin()">
           <span class="btn-icon">⚙️</span>
           <span class="btn-label">Administrador</span>
@@ -368,16 +373,18 @@ PRECISA ADICIONAR BOTAO DE EXLUIR VALOR PAGO NO ADMIN  NO HISTORICO DE PAGAMENTO
               <label>Mensagem de confirmação ao cliente, edite somente as mensagem não remova o que estiver dentro de {}.</label>
               <textarea id="msg-confirm-client" class="cfg-textarea" rows="4"></textarea>
             </div>
-            <div class="form-group">
-              <label>Mensagem de lembrete (1h antes)</label>
+           <!--  <div class="form-group" >
+              <label >Mensagem de lembrete (1h antes)</label>
               <textarea id="msg-reminder" class="cfg-textarea" rows="4"></textarea>
-            </div>
+            </div> -->
             <div class="form-group">
               <label>telefone do admin</label>
               <input type="tel" id="cfg-barber-phone"  class="cfg-input" placeholder="(11) 99999-9999"/>
             </div>
             <button class="btn-primary" onclick="Admin.saveMessages()">Salvar Mensagens</button>
+           
             <div class="help-note">💡 Use {nome}, {servico}, {data}, {hora} como variáveis nas mensagens.</div>
+
           </div>
           <div class="card">
             <h3 class="card-title">💲 Desconto Global</h3>
