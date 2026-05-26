@@ -1,6 +1,5 @@
 
 
-
 # 💈 BarberPro — Sistema de Barbearia
 
 <div align="center">
