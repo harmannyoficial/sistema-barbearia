@@ -863,15 +863,17 @@ const Admin = {
     document.getElementById('msg-confirm-client').value = cfg.msgConfirmClient;
     document.getElementById('msg-reminder').value = cfg.msgReminder;
 
-    /* // ── Link exclusivo + WhatsApp individual ──
+     // ── Link exclusivo + WhatsApp individual ──
     if (!document.getElementById('user-link-card')) {
       const loggedLogin = App.getLoggedLogin();
       const baseUrl = window.location.origin + window.location.pathname.replace(/[^/]*$/, '') + 'agendar.html';
       const exclusiveLink = `${baseUrl}?adm=${loggedLogin}`;
       const savedPhone = Store.getUserWhatsApp(loggedLogin);
 
+
+
       const linkCardHTML = `
-        <div class="card" id="user-link-card" style="border: 1px solid var(--border-gold);">
+        <div class="card" id="user-link-card"  style="border: 1px solid var(--border-gold);">
           <div class="card-title">🔗 Seu Link Exclusivo de Agendamento</div>
           <p style="font-size:.85rem;color:var(--text2);margin-bottom:.75rem;">
             Envie este link para seus clientes. Os agendamentos feitos por ele serão vinculados apenas a você.
@@ -898,7 +900,9 @@ const Admin = {
       // Insere antes do primeiro card de config
       const tabConfig = document.getElementById('tab-config');
       tabConfig.insertAdjacentHTML('afterbegin', linkCardHTML);
-    } */
+    } 
+
+
 
     // Add colors section if not exists
     if (!document.getElementById('colors-card')) {
