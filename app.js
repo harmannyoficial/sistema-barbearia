@@ -102,7 +102,8 @@ const Store = {
         return {
             //controle dos usuarios
             user: 'kleber',         // 👤 USUÁRIO DE LOGIN - EDITAR AQUI
-            pass: 'kleber',         // 🔒 SENHA DE LOGIN - EDITAR AQUI
+            pass: 'kleber',    
+                 // 🔒 SENHA DE LOGIN - EDITAR AQUI
 
             // 🔥 se você mudar isso manualmente no código,
             // todo mundo perde acesso automaticamente
