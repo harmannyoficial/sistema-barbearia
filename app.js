@@ -101,8 +101,8 @@ const Store = {
     _defaultConfig() {
         return {
             //controle dos usuarios
-            user: 'kleber',         // 👤 USUÁRIO DE LOGIN - EDITAR AQUI
-            pass: 'kleber',         // 🔒 SENHA DE LOGIN - EDITAR AQUI
+            user: 'lucas',         // 👤 USUÁRIO DE LOGIN - EDITAR AQUI
+            pass: 'lucas123',         // 🔒 SENHA DE LOGIN - EDITAR AQUI
 
             // 🔥 se você mudar isso manualmente no código,
             // todo mundo perde acesso automaticamente
@@ -116,20 +116,8 @@ const Store = {
                     empresa: "BarberPro Lucas",
                     validade: "2026-12-31",
                     status: "ativo" // "ativo" ou "bloqueado"
-                }, {
-                    login: "bruno",
-                    senha: "bruno123",
-                    empresa: "barberpro bruno mauricio",
-                    validade: "2026-06-15",
-                    status: "ativo" // "ativo" ou "bloqueado"
-                },
-                 {
-                    login: "ana",
-                    senha: "ana123",
-                    empresa: "BarberPro Ana",
-                    validade: "2026-12-31",
-                    status: "ativo" // "ativo" ou "bloqueado"
-                },
+                }, 
+                
             ],
 
             openTime: '09:00',
@@ -141,10 +129,10 @@ const Store = {
             barberPhone: '',
 
             msgConfirmClient:
-                'Olá {nome}! Seu agendamento está confirmado ✅\n📅 Serviço: {servico}\n🕐 Data/Hora: {data} às {hora}\n\nAté lá! ✂️ BarberPro',
+                'Olá {nome}! Seu agendamento está confirmado ✅\n📅 Serviço: {servico}\n🕐 Data/Hora: {data} às {hora}\n\nAté lá! ✂️ Lucas rocha',
 
             msgReminder:
-                'Lembrete ⏰ {nome}, seu horário é em 30 minutos!\n📅 {servico} às {hora}\n\nTe esperamos! ✂️ BarberPro',
+                'Lembrete ⏰ {nome}, seu horário é em 30 minutos!\n📅 {servico} às {hora}\n\nTe esperamos! ✂️ Lucas rocha',
 
             colors: {
                 gold: '#C9A84C',
