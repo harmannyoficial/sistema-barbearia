@@ -863,7 +863,7 @@ const Admin = {
     document.getElementById('msg-confirm-client').value = cfg.msgConfirmClient;
     document.getElementById('msg-reminder').value = cfg.msgReminder;
 
-    // ── Link exclusivo + WhatsApp individual ──
+    /* // ── Link exclusivo + WhatsApp individual ──
     if (!document.getElementById('user-link-card')) {
       const loggedLogin = App.getLoggedLogin();
       const baseUrl = window.location.origin + window.location.pathname.replace(/[^/]*$/, '') + 'agendar.html';
@@ -898,7 +898,7 @@ const Admin = {
       // Insere antes do primeiro card de config
       const tabConfig = document.getElementById('tab-config');
       tabConfig.insertAdjacentHTML('afterbegin', linkCardHTML);
-    }
+    } */
 
     // Add colors section if not exists
     if (!document.getElementById('colors-card')) {

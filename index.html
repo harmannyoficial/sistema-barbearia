@@ -365,7 +365,7 @@ PRECISA ADICIONAR BOTAO DE EXLUIR VALOR PAGO NO ADMIN  NO HISTORICO DE PAGAMENTO
           <div class="card">
             <h3 class="card-title">📱 Mensagens WhatsApp</h3>
             <div class="form-group">
-              <label>Mensagem de confirmação ao cliente</label>
+              <label>Mensagem de confirmação ao cliente, edite somente as mensagem não remova o que estiver dentro de {}.</label>
               <textarea id="msg-confirm-client" class="cfg-textarea" rows="4"></textarea>
             </div>
             <div class="form-group">
@@ -373,8 +373,8 @@ PRECISA ADICIONAR BOTAO DE EXLUIR VALOR PAGO NO ADMIN  NO HISTORICO DE PAGAMENTO
               <textarea id="msg-reminder" class="cfg-textarea" rows="4"></textarea>
             </div>
             <div class="form-group">
-              <label>Edite somente as mensagem! O que estiver dento de {} manter intacto</label>
-              <input type="tel" id="cfg-barber-phone" hidden class="cfg-input" placeholder="(11) 99999-9999"/>
+              <label>telefone do admin</label>
+              <input type="tel" id="cfg-barber-phone"  class="cfg-input" placeholder="(11) 99999-9999"/>
             </div>
             <button class="btn-primary" onclick="Admin.saveMessages()">Salvar Mensagens</button>
             <div class="help-note">💡 Use {nome}, {servico}, {data}, {hora} como variáveis nas mensagens.</div>
