@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Agendamento Online</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="./style.css"/>
+  <style>
+    /* Garante que só a área do cliente apareça nesta página */
+    body { background: var(--bg, #0E0E0F); }
+
+    .agendar-page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .agendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border, rgba(255,255,255,0.07));
+      background: var(--bg2, #181819);
+      gap: .75rem;
+      position: relative;
+    }
+
+    .agendar-header .logo-icon {
+      font-size: 1.5rem;
+      color: var(--gold, #C9A84C);
+    }
+
+    .agendar-header .logo-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      color: var(--gold, #C9A84C);
+      margin: 0;
+    }
+
+    .agendar-header .owner-badge {
+      position: absolute;
+      right: 1.25rem;
+      font-size: .78rem;
+      color: var(--text2, #9A9590);
+      background: var(--bg3, #222224);
+      padding: .25rem .65rem;
+      border-radius: 20px;
+      border: 1px solid var(--border, rgba(255,255,255,0.07));
+    }
+
+    .agendar-body {
+      flex: 1;
+      max-width: 560px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 3rem;
+    }
+
+    /* Loading state */
+    .loading-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 60vh;
+      gap: 1rem;
+      color: var(--text2, #9A9590);
+      font-size: .95rem;
+    }
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border, rgba(255,255,255,0.07));
+      border-top-color: var(--gold, #C9A84C);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Link inválido */
+    .invalid-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 60vh;
+      text-align: center;
+      gap: 1rem;
+      padding: 2rem;
+    }
+
+    .invalid-screen .icon { font-size: 3rem; }
+    .invalid-screen h2 { color: var(--text, #F0EDE8); font-size: 1.3rem; margin: 0; }
+    .invalid-screen p { color: var(--text2, #9A9590); font-size: .9rem; margin: 0; }
+  </style>
+</head>
+<body>
+
+<div class="agendar-page">
+
+  <!-- Cabeçalho fixo -->
+  <header class="agendar-header">
+    <div class="logo-icon">✂</div>
+   
+    <span class="owner-badge" id="owner-badge" style="display:none;"></span>
+  </header>
+
+  <!-- Conteúdo principal -->
+  <div class="agendar-body">
+
+    <!-- Estado: carregando -->
+    <div id="state-loading" class="loading-screen">
+      <div class="loading-spinner"></div>
+      <span>Carregando agendamento...</span>
+    </div>
+
+    <!-- Estado: link inválido -->
+    <div id="state-invalid" class="invalid-screen" style="display:none;">
+      <div class="icon">🔗</div>
+      <h2>Link inválido</h2>
+      <p>Este link de agendamento não é válido ou não pertence a nenhum profissional cadastrado.</p>
+      <p style="margin-top:.5rem;font-size:.82rem;color:var(--text3,#5C5955);">Verifique o link com o profissional que te enviou.</p>
+    </div>
+
+    <!-- Área do cliente — mesma estrutura do index.html -->
+    <div id="state-client" style="display:none;">
+
+      <!-- Passo 1: Dados do cliente -->
+      <div id="client-step-1" class="client-step active">
+        <div class="step-header">
+          <div class="step-num">1</div>
+          <div>
+            <h2>Seus Dados</h2>
+            <p>Informe como podemos te chamar</p>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Seu nome completo</label>
+          <input type="text" id="c-name" placeholder="Ex: João Silva"/>
+        </div>
+        <div class="form-group">
+          <label>WhatsApp</label>
+          <input type="tel" id="c-phone" placeholder="(11) 99999-9999" oninput="App.maskPhone(this)"/>
+        </div>
+        <button class="btn-primary full" onclick="App.clientStep2()">Próximo →</button>
+      </div>
+
+      <!-- Passo 2: Escolha do serviço -->
+      <div id="client-step-2" class="client-step">
+        <div class="step-header">
+          <button class="btn-back-step" onclick="App.clientBack(1)">←</button>
+          <div class="step-num">2</div>
+          <div>
+            <h2>Escolha o Serviço</h2>
+            <p>Selecione o que deseja realizar</p>
+          </div>
+        </div>
+        <div id="services-grid" class="services-grid"></div>
+        <button class="btn-primary full" onclick="App.clientStep3()" id="btn-step3" disabled>Escolher Horário →</button>
+      </div>
+
+      <!-- Passo 3: Calendário + Horário -->
+      <div id="client-step-3" class="client-step">
+        <div class="step-header">
+          <button class="btn-back-step" onclick="App.clientBack(2)">←</button>
+          <div class="step-num">3</div>
+          <div>
+            <h2>Data e Horário</h2>
+            <p>Escolha quando quer ser atendido</p>
+          </div>
+        </div>
+        <div class="calendar-mini-wrap">
+          <div class="cal-nav">
+            <button onclick="App.calPrev()">‹</button>
+            <span id="cal-month-label"></span>
+            <button onclick="App.calNext()">›</button>
+          </div>
+          <div id="cal-grid" class="cal-grid"></div>
+        </div>
+        <div id="time-slots-wrap" class="time-slots-wrap hidden">
+          <h3 id="selected-date-label">Horários disponíveis</h3>
+          <div id="time-slots" class="time-slots"></div>
+        </div>
+        <button class="btn-primary full" onclick="App.clientConfirm()" id="btn-confirm" disabled>Confirmar Agendamento →</button>
+      </div>
+
+      <!-- Passo 4: Confirmação -->
+      <div id="client-step-4" class="client-step">
+        <div class="confirm-card">
+          <div class="confirm-icon">✅</div>
+          <h2>Agendamento Confirmado!</h2>
+          <div id="confirm-details" class="confirm-details"></div>
+          <div class="whatsapp-notice">
+            <span>📱</span>
+            <span>Você receberá uma confirmação pelo WhatsApp</span>
+          </div>
+          <button class="btn-primary full" onclick="App.clientNewBooking()">Fazer Novo Agendamento</button>
+        </div>
+      </div>
+
+    </div><!-- /state-client -->
+
+  </div><!-- /agendar-body -->
+</div><!-- /agendar-page -->
+
+<!-- Modal: seleção de horário -->
+<div id="modal-overlay" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:999;" onclick="Modal.closeOnOverlay(event)"></div>
+
+<div id="modal-time-select" class="modal hidden" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1000;">
+  <div class="modal-content" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);max-width:500px;padding:2rem;">
+    <h3 id="time-select-title" style="margin-bottom:1rem;text-align:center;">Selecione o horário</h3>
+    <div id="time-slots-modal" class="time-slots" style="max-height:400px;overflow-y:auto;"></div>
+    <div style="text-align:center;margin-top:1rem;">
+      <button class="btn" style="color:#000;" onclick="Modal.close('modal-time-select')">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast hidden"></div>
+
+<script src="supabase.js"></script>
+<script src="app.js></script"></script>
+<script src="./admin.js"></script>
+
+<script>
+  // ── Inicialização exclusiva da página agendar.html ──
+  window.addEventListener('DOMContentLoaded', () => {
+
+    // Lê o ?adm= da URL
+    const params = new URLSearchParams(window.location.search);
+    const admLogin = (params.get('adm') || '').trim().toLowerCase();
+
+    const elLoading = document.getElementById('state-loading');
+    const elInvalid = document.getElementById('state-invalid');
+    const elClient  = document.getElementById('state-client');
+    const ownerBadge = document.getElementById('owner-badge');
+
+    // Verifica se o login existe na lista de clientesLiberados ou é o admin
+    const cfg = Store.getConfig();
+    const lista = cfg.clientesLiberados || [];
+    const isAdmin = admLogin === (cfg.user || '').toLowerCase();
+    const clienteEncontrado = lista.find(c => c.login.toLowerCase() === admLogin);
+
+    const ownerValido = isAdmin || (clienteEncontrado && clienteEncontrado.status === 'ativo');
+
+    // Esconde o loading
+    elLoading.style.display = 'none';
+
+    if (!admLogin || !ownerValido) {
+      // Link inválido ou usuário não encontrado/bloqueado
+      elInvalid.style.display = 'flex';
+      return;
+    }
+
+    // Exibe badge com nome do profissional
+    const cfg2 = Store.getConfig();
+    const appName = cfg2.appName || 'BarberPro';
+    const empresa = isAdmin ? cfg.user : (clienteEncontrado.empresa || clienteEncontrado.login);
+    ownerBadge.textContent = '✂ ' + empresa;
+    ownerBadge.style.display = '';
+
+    // Atualiza nome do app e título da aba
+    const logoEl = document.getElementById('agendar-app-name');
+    if (logoEl) logoEl.textContent = appName;
+    document.title = `Agendar — ${empresa}`;
+
+    // Exibe área do cliente
+    elClient.style.display = 'block';
+
+    // Garante dados default
+    Store.getServices();
+
+    // Inicializa o fluxo do cliente
+    Client.init();
+  });
+</script>
+
+</body>
+</html>

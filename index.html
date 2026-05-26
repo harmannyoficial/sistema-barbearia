@@ -1,0 +1,589 @@
+<!-- admin
+admin
+
+PRECISA ADICIONAR BOTAO DE EXLUIR VALOR PAGO NO ADMIN  NO HISTORICO DE PAGAMENTO  PARTE DE FATURAMENTO. 
+
+-->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BarberPro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="./style.css"/>
+</head>
+<body>
+  <!-- ══════════════════════════════════════════
+       TELA DE ENTRADA — Escolha de perfil
+  ══════════════════════════════════════════ -->
+  <div id="screen-entry" class="screen active">
+    <div class="entry-bg"></div>
+    <div class="entry-card">
+      <div class="logo-wrap">
+        <div class="logo-icon">✂</div>
+        <h1 class="logo-text">BarberPro</h1>
+        <p class="logo-sub">Sistema Profissional de Agendamento</p>
+      </div>
+      <div class="entry-buttons">
+        <button class="btn-entry client" onclick="App.showClientArea()">
+          <span class="btn-icon">👤</span>
+          <span class="btn-label">Sou Cliente</span>
+          <span class="btn-desc">Agendar horário</span>
+        </button>
+        <button class="btn-entry admin" onclick="App.showLogin()">
+          <span class="btn-icon">⚙️</span>
+          <span class="btn-label">Administrador</span>
+          <span class="btn-desc">Painel de controle</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       TELA DE LOGIN — Administrador
+  ══════════════════════════════════════════ -->
+  <div id="screen-login" class="screen">
+    <div class="login-wrap">
+      <button class="btn-back" onclick="App.goHome()">← Voltar</button>
+      <div class="login-card">
+        <div class="login-header">
+          <div class="logo-icon sm">✂</div>
+          <h2>Acesso Administrativo</h2>
+          <p>Entre com suas credenciais</p>
+        </div>
+        <div class="form-group">
+          <label>Usuário</label>
+          <input type="text" id="login-user" placeholder="Usuário" autocomplete="username"/>
+        </div>
+        <div class="form-group">
+          <input type="password" id="login-pass" placeholder="admin" autocomplete="current-password"/>
+        </div>
+        <button class="btn-primary full" onclick="App.doLogin()">Entrar no Painel</button>
+        <div id="login-error" class="error-msg hidden">Usuário ou senha incorretos.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       ÁREA DO CLIENTE
+  ══════════════════════════════════════════ -->
+  <div id="screen-client" class="screen">
+    <header class="client-header">
+      <div class="header-logo">✂ BarberPro</div>
+      <button class="btn-back-sm" onclick="App.goHome()">← Início</button>
+    </header>
+
+    <div class="client-body">
+      <!-- Passo 1: Dados do cliente -->
+      <div id="client-step-1" class="client-step active">
+        <div class="step-header">
+          <div class="step-num">1</div>
+          <div>
+            <h2>Seus Dados</h2>
+            <p>Informe como podemos te chamar</p>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Seu nome completo</label>
+          <input type="text" id="c-name" placeholder="Ex: João Silva"/>
+        </div>
+        <div class="form-group">
+          <label>WhatsApp</label>
+          <input type="tel" id="c-phone" placeholder="(11) 99999-9999" oninput="App.maskPhone(this)"/>
+        </div>
+        <button class="btn-primary full" onclick="App.clientStep2()">Próximo →</button>
+      </div>
+
+      <!-- Passo 2: Escolha do serviço -->
+      <div id="client-step-2" class="client-step">
+        <div class="step-header">
+          <button class="btn-back-step" onclick="App.clientBack(1)">←</button>
+          <div class="step-num">2</div>
+          <div>
+            <h2>Escolha o Serviço</h2>
+            <p>Selecione o que deseja realizar</p>
+          </div>
+        </div>
+        <div id="services-grid" class="services-grid"></div>
+        <button class="btn-primary full" onclick="App.clientStep3()" id="btn-step3" disabled>Escolher Horário →</button>
+      </div>
+
+      <!-- Passo 3: Calendário + Horário -->
+      <div id="client-step-3" class="client-step">
+        <div class="step-header">
+          <button class="btn-back-step" onclick="App.clientBack(2)">←</button>
+          <div class="step-num">3</div>
+          <div>
+            <h2>Data e Horário</h2>
+            <p>Escolha quando quer ser atendido</p>
+          </div>
+        </div>
+        <div class="calendar-mini-wrap">
+          <div class="cal-nav">
+            <button onclick="App.calPrev()">‹</button>
+            <span id="cal-month-label"></span>
+            <button onclick="App.calNext()">›</button>
+          </div>
+          <div id="cal-grid" class="cal-grid"></div>
+        </div>
+        <div id="time-slots-wrap" class="time-slots-wrap hidden">
+          <h3 id="selected-date-label">Horários disponíveis</h3>
+          <div id="time-slots" class="time-slots"></div>
+        </div>
+        <button class="btn-primary full" onclick="App.clientConfirm()" id="btn-confirm" disabled>Confirmar Agendamento →</button>
+      </div>
+
+      <!-- Passo 4: Confirmação -->
+      <div id="client-step-4" class="client-step">
+        <div class="confirm-card">
+          <div class="confirm-icon">✅</div>
+          <h2>Agendamento Confirmado!</h2>
+          <div id="confirm-details" class="confirm-details"></div>
+          <div class="whatsapp-notice">
+            <span>📱</span>
+            <span>Você receberá uma confirmação pelo WhatsApp</span>
+          </div>
+          <button class="btn-primary full" onclick="App.clientNewBooking()">Fazer Novo Agendamento</button>
+          <button class="btn-secondary full" onclick="App.goHome()">Voltar ao Início</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PAINEL ADMINISTRATIVO
+  ══════════════════════════════════════════ -->
+  <div id="screen-admin" class="screen">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon sm">✂</div>
+        <span>BarberPro</span>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" onclick="Admin.tab('dashboard')" data-tab="dashboard">
+          <span class="nav-icon">📊</span><span>Dashboard</span>
+        </button>
+        <button class="nav-item" onclick="Admin.tab('agenda')" data-tab="agenda">
+          <span class="nav-icon">📅</span><span>Agenda</span>
+        </button>
+        <button class="nav-item" onclick="Admin.tab('calendario')" data-tab="calendario">
+          <span class="nav-icon">📆</span><span>Calendário</span>
+        </button>
+        <button class="nav-item" onclick="Admin.tab('clientes')" data-tab="clientes">
+          <span class="nav-icon">👥</span><span>Clientes</span>
+        </button>
+        <button class="nav-item" onclick="Admin.tab('servicos')" data-tab="servicos">
+          <span class="nav-icon">✂️</span><span>Serviços</span>
+        </button>
+        <button class="nav-item" onclick="Admin.tab('financeiro')" data-tab="financeiro">
+          <span class="nav-icon">💰</span><span>Financeiro</span>
+        </button>
+        <button class="nav-item" onclick="Admin.tab('estoque')" data-tab="estoque">
+          <span class="nav-icon">📦</span><span>Estoque</span>
+        </button>
+        <button class="nav-item" onclick="Admin.tab('bloqueios')" data-tab="bloqueios">
+          <span class="nav-icon">🔒</span><span>Bloqueios</span>
+        </button>
+        <button class="nav-item" onclick="Admin.tab('config')" data-tab="config">
+          <span class="nav-icon">⚙️</span><span>Configurações</span>
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="btn-logout" onclick="App.logout()">↩ Sair</button>
+      </div>
+    </aside>
+
+    <!-- Mobile top bar -->
+    <div class="mobile-topbar">
+      <button class="hamburger" onclick="Admin.toggleSidebar()">☰</button>
+      <span class="mobile-title">BarberPro Admin</span>
+      <button class="btn-logout-sm" onclick="App.logout()">↩</button>
+    </div>
+
+    <!-- Main content -->
+    <main class="admin-main">
+
+      <!-- ── DASHBOARD ── -->
+      <div id="tab-dashboard" class="tab-content active">
+        <div class="page-header">
+          <h1>Dashboard</h1>
+          <div id="current-date-label" class="date-label"></div>
+        </div>
+        <div class="kpi-grid" id="kpi-grid"></div>
+        <div class="dashboard-grid">
+          <div class="card">
+            <h3 class="card-title">📅 Agendamentos de Hoje</h3>
+            <div id="today-list" class="appointment-list"></div>
+          </div>
+          <div class="card">
+            <h3 class="card-title">🏆 Serviços Mais Vendidos</h3>
+            <div id="top-services" class="top-services-list"></div>
+          </div>
+          <div class="card">
+            <h3 class="card-title">💸 Débitos (Fiados)</h3>
+            <button class="btn-danger" onclick="Admin.showDebts()">Ver Débitos</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── AGENDA ── -->
+      <div id="tab-agenda" class="tab-content">
+        <div class="page-header">
+          <h1>Agenda de Hoje</h1>
+          <button class="btn-primary" onclick="Admin.openNewBooking()">+ Novo Agendamento</button>
+        </div>
+
+        <!-- Agendamentos do dia atual -->
+        <div class="card">
+          <h3 class="card-title" id="today-title">Hoje</h3>
+          <div id="today-appointments-list" class="appointment-list"></div>
+        </div>
+      </div>
+
+      <!-- ── CALENDÁRIO ── -->
+      <div id="tab-calendario" class="tab-content">
+        <div class="page-header">
+          <h1>Calendário</h1>
+        </div>
+
+        <!-- Calendário Admin -->
+        <div class="card">
+          <div class="cal-nav admin-cal-nav">
+            <button onclick="Admin.calPrev()">‹ Anterior</button>
+            <span id="admin-cal-label" class="cal-month-big"></span>
+            <button onclick="Admin.calNext()">Próximo ›</button>
+          </div>
+          <div id="admin-cal-grid" class="cal-grid admin-cal"></div>
+        </div>
+      </div>
+
+      <!-- ── CLIENTES ── -->
+      <div id="tab-clientes" class="tab-content">
+        <div class="page-header">
+          <h1>Clientes</h1>
+          <input type="search" id="client-search" placeholder="Buscar cliente..." class="search-input" oninput="Admin.filterClients()"/>
+        </div>
+        <div class="card">
+          <div id="clients-table-wrap"></div>
+        </div>
+      </div>
+
+      <!-- ── SERVIÇOS ── -->
+      <div id="tab-servicos" class="tab-content">
+        <div class="page-header">
+          <h1>Serviços</h1>
+          <button class="btn-primary" onclick="Admin.openServiceModal()">+ Novo Serviço</button>
+        </div>
+        <div id="services-admin-grid" class="services-admin-grid"></div>
+      </div>
+
+      <!-- ── FINANCEIRO ── -->
+      <div id="tab-financeiro" class="tab-content">
+        <div class="page-header">
+          <h1>Financeiro</h1>
+          <div class="filter-bar">
+            <select id="fin-filter" onchange="Admin.renderFinanceiro()">
+              <option value="today">Hoje</option>
+              <option value="week">Esta semana</option>
+              <option value="month" selected>Este mês</option>
+              <option value="all">Tudo</option>
+            </select>
+          </div>
+        </div>
+        <div class="kpi-grid" id="fin-kpi-grid"></div>
+        <div class="card">
+          <h3 class="card-title">📋 Histórico de Pagamentos</h3>
+          <div id="fin-history"></div>
+        </div>
+      </div>
+
+      <!-- ── ESTOQUE ── -->
+      <div id="tab-estoque" class="tab-content">
+        <div class="page-header">
+          <h1>Estoque</h1>
+          <button class="btn-primary" onclick="Admin.openStockModal()">+ Adicionar Item</button>
+        </div>
+        <div class="card">
+          <div id="stock-list"></div>
+        </div>
+      </div>
+
+      <!-- ── BLOQUEIOS ── -->
+      <div id="tab-bloqueios" class="tab-content">
+        <div class="page-header">
+          <h1>Bloqueios de Horário</h1>
+          <button class="btn-primary" onclick="Admin.openBlockModal()">+ Bloquear</button>
+        </div>
+        <div class="card">
+          <h3 class="card-title">Horários / Dias Bloqueados</h3>
+          <div id="blocks-list"></div>
+        </div>
+      </div>
+
+      <!-- ── CONFIGURAÇÕES ── -->
+      <div id="tab-config" class="tab-content">
+        <div class="page-header"><h1>Configurações</h1></div>
+        <div class="config-grid">
+        <!-- area de senha para o cliente  -->
+          <div  class="card" hidden >
+            <h3 class="card-title">🔐 Credenciais de Acesso</h3>
+            <div class="form-group" >
+              <label>Usuário admin</label>
+              <input type="text" disabled id="cfg-user" class="cfg-input"/>
+            </div>
+            <div class="form-group">
+              <label>Nova senha</label>
+              <input type="password" disabled   id="cfg-pass" class="cfg-input" placeholder="Deixe vazio para não alterar"/>
+            </div>
+            <button class="btn-primary" disabled  onclick="Admin.saveCredentials()">Salvar Credenciais</button>
+          </div>
+          <!-- ate aqui  -->
+          <div class="card">
+            <h3 class="card-title">⏰ Horário de Funcionamento</h3>
+            <div class="form-group">
+              <label>Abertura</label>
+              <input type="time" id="cfg-open" class="cfg-input" value="09:00"/>
+            </div>
+            <div class="form-group">
+              <label>Fechamento</label>
+              <input type="time" id="cfg-close" class="cfg-input" value="19:00"/>
+            </div>
+            <div class="form-group">
+              <label>Intervalo entre horários (min)</label>
+              <input type="number" id="cfg-interval" class="cfg-input" value="30" min="15" max="120"/>
+            </div>
+            <div class="form-group">
+              <label>Dias de funcionamento</label>
+              <div class="days-check" id="days-check"></div>
+            </div>
+            <button class="btn-primary" onclick="Admin.saveHours()">Salvar Horários</button>
+          </div>
+          <div class="card">
+            <h3 class="card-title">📱 Mensagens WhatsApp</h3>
+            <div class="form-group">
+              <label>Mensagem de confirmação ao cliente</label>
+              <textarea id="msg-confirm-client" class="cfg-textarea" rows="4"></textarea>
+            </div>
+            <div class="form-group">
+              <label>Mensagem de lembrete (1h antes)</label>
+              <textarea id="msg-reminder" class="cfg-textarea" rows="4"></textarea>
+            </div>
+            <div class="form-group">
+              <label>Edite somente as mensagem! O que estiver dento de {} manter intacto</label>
+              <input type="tel" id="cfg-barber-phone" hidden class="cfg-input" placeholder="(11) 99999-9999"/>
+            </div>
+            <button class="btn-primary" onclick="Admin.saveMessages()">Salvar Mensagens</button>
+            <div class="help-note">💡 Use {nome}, {servico}, {data}, {hora} como variáveis nas mensagens.</div>
+          </div>
+          <div class="card">
+            <h3 class="card-title">💲 Desconto Global</h3>
+            <div class="form-group">
+              <label>Desconto em % (0 = sem desconto)</label>
+              <input type="number" id="cfg-discount" class="cfg-input" min="0" max="100" value="0"/>
+            </div>
+            <div class="form-group">
+              <label>Código do cupom (opcional)</label>
+              <input type="text" id="cfg-coupon" class="cfg-input" placeholder="Ex: PROMO10"/>
+            </div>
+            <button class="btn-primary" onclick="Admin.saveDiscount()">Salvar Desconto</button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div><!-- /screen-admin -->
+
+  <!-- ══════════════════════════════════════════
+       MODAIS
+  ══════════════════════════════════════════ -->
+  <div id="modal-overlay" class="modal-overlay hidden" onclick="Modal.closeOnOverlay(event)">
+
+    <!-- Modal: Novo/Editar Agendamento (Admin) -->
+    <div id="modal-booking" class="modal hidden">
+      <div class="modal-header">
+        <h3 id="modal-booking-title">Novo Agendamento</h3>
+        <button class="modal-close" onclick="Modal.close('modal-booking')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="booking-edit-id"/>
+        <div class="form-group">
+          <label>Nome do cliente *</label>
+          <input type="text" id="bk-name" placeholder="Nome completo"/>
+        </div>
+        <div class="form-group">
+          <label>WhatsApp *</label>
+          <input type="tel" id="bk-phone" placeholder="(11) 99999-9999" oninput="App.maskPhone(this)"/>
+        </div>
+        <div class="form-group">
+          <label>Serviço *</label>
+          <select id="bk-service"></select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Data *</label>
+            <input type="date" id="bk-date"/>
+          </div>
+          <div class="form-group">
+            <label>Horário *</label>
+            <select id="bk-time"></select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Status de pagamento</label>
+          <select id="bk-payment">
+            <option value="pending">Pendente</option>
+            <option value="paid">Pago</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Observação</label>
+          <textarea id="bk-obs" rows="2" placeholder="Observações sobre o agendamento..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="Modal.close('modal-booking')">Cancelar</button>
+        <button class="btn-primary" onclick="Admin.saveBooking()">Salvar</button>
+      </div>
+    </div>
+
+    <!-- Modal: Novo/Editar Serviço -->
+    <div id="modal-service" class="modal hidden">
+      <div class="modal-header">
+        <h3 id="modal-service-title">Novo Serviço</h3>
+        <button class="modal-close" onclick="Modal.close('modal-service')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="svc-edit-id"/>
+        <div class="form-group">
+          <label>Nome do serviço *</label>
+          <input type="text" id="svc-name" placeholder="Ex: Corte + Barba"/>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Preço (R$) *</label>
+            <input type="number" id="svc-price" min="0" step="0.01" placeholder="0,00"/>
+          </div>
+          <div class="form-group">
+            <label>Duração (min)</label>
+            <input type="number" id="svc-duration" min="15" step="15" value="30"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Descrição</label>
+          <input type="text" id="svc-desc" placeholder="Breve descrição..."/>
+        </div>
+        <div class="form-group">
+          <label>Emoji / ícone</label>
+          <input type="text" id="svc-icon" placeholder="✂" maxlength="2" style="font-size:1.5rem;width:60px;text-align:center"/>
+        </div>
+        <div class="form-group toggle-group">
+          <label>Serviço ativo?</label>
+          <label class="toggle-switch">
+            <input type="checkbox" id="svc-active" checked/>
+            <span class="toggle-knob"></span>
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="Modal.close('modal-service')">Cancelar</button>
+        <button class="btn-primary" onclick="Admin.saveService()">Salvar</button>
+      </div>
+    </div>
+
+    <!-- Modal: Estoque -->
+    <div id="modal-stock" class="modal hidden">
+      <div class="modal-header">
+        <h3 id="modal-stock-title">Item de Estoque</h3>
+        <button class="modal-close" onclick="Modal.close('modal-stock')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="stk-edit-id"/>
+        <div class="form-group">
+          <label>Produto *</label>
+          <input type="text" id="stk-name" placeholder="Ex: Pomada Capilar"/>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Quantidade</label>
+            <input type="number" id="stk-qty" min="0" value="1"/>
+          </div>
+          <div class="form-group">
+            <label>Alerta (mín.)</label>
+            <input type="number" id="stk-min" min="0" value="2"/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Preço compra (R$)</label>
+            <input type="number" id="stk-cost" min="0" step="0.01" value="0"/>
+          </div>
+          <div class="form-group">
+            <label>Preço venda (R$)</label>
+            <input type="number" id="stk-sell" min="0" step="0.01" value="0"/>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="Modal.close('modal-stock')">Cancelar</button>
+        <button class="btn-primary" onclick="Admin.saveStock()">Salvar</button>
+      </div>
+    </div>
+
+    <!-- Modal: Bloqueio -->
+    <div id="modal-block" class="modal hidden">
+      <div class="modal-header">
+        <h3>Bloquear Horário / Dia</h3>
+        <button class="modal-close" onclick="Modal.close('modal-block')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Data *</label>
+          <input type="date" id="blk-date"/>
+        </div>
+        <div class="form-group">
+          <label>Horário (vazio = dia inteiro)</label>
+          <input type="time" id="blk-time"/>
+        </div>
+        <div class="form-group">
+          <label>Motivo</label>
+          <input type="text" id="blk-reason" placeholder="Ex: Feriado, Folga..."/>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="Modal.close('modal-block')">Cancelar</button>
+        <button class="btn-primary" onclick="Admin.saveBlock()">Bloquear</button>
+      </div>
+    </div>
+
+    <!-- Modal: Editar observação cliente -->
+    <div id="modal-client-obs" class="modal hidden">
+      <div class="modal-header">
+        <h3>Observação do Cliente</h3>
+        <button class="modal-close" onclick="Modal.close('modal-client-obs')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="obs-client-phone"/>
+        <div class="form-group">
+          <label>Observação</label>
+          <textarea id="obs-text" rows="4" placeholder="Ex: cliente pontual, faltoso..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="Modal.close('modal-client-obs')">Cancelar</button>
+        <button class="btn-primary" onclick="Admin.saveClientObs()">Salvar</button>
+      </div>
+    </div>
+
+  </div><!-- /modal-overlay -->
+
+  <!-- Toast notification -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="./app.js?v=1000"></script>
+<script src="./admin.js?v=1000"></script>
+</body>
+</html>
